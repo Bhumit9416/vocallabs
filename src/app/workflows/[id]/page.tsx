@@ -21,7 +21,7 @@ export default function WorkflowDetailPage() {
   const params = useParams<{ id: string }>();
   const workflowId = params.id;
   const { user, loading: authLoading } = useAuth();
-  const { current, canRun } = useOrg();
+  const { current, canRun, canEdit } = useOrg();
   const router = useRouter();
   const [runId, setRunId] = useState<string | null>(null);
   const [lead, setLead] = useState('Acme Corp — interested in enterprise plan');

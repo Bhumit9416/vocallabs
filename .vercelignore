@@ -1,0 +1,8 @@
+functions
+services
+nhost
+scripts
+docker-compose.yml
+.env
+.env.local
+.env.example

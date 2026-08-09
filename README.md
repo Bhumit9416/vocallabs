@@ -7,7 +7,7 @@ Mini workflow builder for chaining AI agent steps. Built on Hasura GraphQL, Post
 | Deliverable | Link |
 |-------------|------|
 | **GitHub repo** | https://github.com/Bhumit9416/vocallabs |
-| **Live app** | _Deploy to Vercel — see [docs/DEPLOY.md](docs/DEPLOY.md)_ |
+| **Live app** | https://vocallabs-wine.vercel.app |
 | **Demo recording** | _Record using [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md)_ |
 | **Architecture write-up** | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
 

@@ -1,0 +1,39 @@
+# Render blueprint — optional backend hosting
+# Docs: https://render.com/docs/infrastructure-as-code
+#
+# Note: Full stack is easiest via Railway or local Docker for the assignment demo.
+# This file documents the services you need publicly reachable.
+
+services:
+  - type: web
+    name: vocallabs-functions
+    runtime: docker
+    dockerfilePath: ./functions/Dockerfile
+    dockerContext: ./functions
+    envVars:
+      - key: PORT
+        value: 4001
+      - key: HASURA_GRAPHQL_URL
+        sync: false
+      - key: HASURA_GRAPHQL_ADMIN_SECRET
+        generateValue: true
+      - key: GROQ_API_KEY
+        sync: false
+
+  - type: web
+    name: vocallabs-auth
+    runtime: docker
+    dockerfilePath: ./services/auth-stub/Dockerfile
+    dockerContext: ./services/auth-stub
+    envVars:
+      - key: PORT
+        value: 4002
+      - key: JWT_SECRET
+        generateValue: true
+      - key: HASURA_GRAPHQL_URL
+        sync: false
+      - key: HASURA_GRAPHQL_ADMIN_SECRET
+        sync: false
+
+# Hasura + Postgres: use Render PostgreSQL + Hasura Cloud free tier, or Railway template.
+# After Hasura is public, run: node scripts/bootstrap.js
