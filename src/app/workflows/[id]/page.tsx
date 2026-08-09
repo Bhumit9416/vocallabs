@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { gql, useMutation, useQuery, useSubscription } from '@apollo/client';
 import {
@@ -223,6 +224,11 @@ export default function WorkflowDetailPage() {
               <textarea value={lead} onChange={(e) => setLead(e.target.value)} />
             </div>
             <div className="row">
+              {canEdit && (
+                <Link className="btn" href={`/workflows/${workflowId}/edit`}>
+                  Edit
+                </Link>
+              )}
               {canRun && (
                 <button className="btn btn-primary" type="button" disabled={busy} onClick={onRun}>
                   {busy ? 'Working…' : 'Run'}

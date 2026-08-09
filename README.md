@@ -2,6 +2,17 @@
 
 Mini workflow builder for chaining AI agent steps. Built on Hasura GraphQL, PostgreSQL, and a Next.js app. Local stack uses Docker (Postgres + Hasura + Action handlers + auth). The same Hasura metadata/migrations under `nhost/` work with an nhost project if you prefer cloud hosting.
 
+## Submission
+
+| Deliverable | Link |
+|-------------|------|
+| **GitHub repo** | https://github.com/Bhumit9416/vocallabs |
+| **Live app** | _Deploy to Vercel — see [docs/DEPLOY.md](docs/DEPLOY.md)_ |
+| **Demo recording** | _Record using [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md)_ |
+| **Architecture write-up** | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
+
+Quick verify after setup: `npm run smoke`
+
 ## What you get
 
 - Org-scoped workflows with ordered steps: `llm_call`, `http_request`, `db_write`, `notify`, `conditional_branch`, `approval_gate`
@@ -99,14 +110,20 @@ functions/         Action + event handlers (executor, retries, quota)
 scripts/bootstrap.js  Local metadata apply + seed
 src/               Next.js app
 docs/ARCHITECTURE.md  Schema + permission write-up
+docs/DEMO_SCRIPT.md   Screen recording script
+docs/DEPLOY.md        Hosted deployment steps
 ```
 
 ## Deploy
 
-1. Point `NEXT_PUBLIC_GRAPHQL_URL` / `WS` at your hosted Hasura (nhost or self-hosted).
-2. Deploy functions and wire Action handler URLs in Hasura metadata.
-3. Deploy the Next.js app to Vercel with the same public env vars.
-4. Re-run seed (or recreate demo users) against the hosted project.
+See **[docs/DEPLOY.md](docs/DEPLOY.md)** for Railway, nhost, and Vercel steps.
+
+Summary:
+
+1. Deploy backend (Hasura + functions + auth) to Railway or nhost.
+2. Run `node scripts/bootstrap.js` against the public Hasura URL.
+3. Deploy Next.js to Vercel with `NEXT_PUBLIC_GRAPHQL_URL`, `NEXT_PUBLIC_GRAPHQL_WS_URL`, `NEXT_PUBLIC_AUTH_URL`.
+4. Record demo using [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
 
 ## Notes
 
