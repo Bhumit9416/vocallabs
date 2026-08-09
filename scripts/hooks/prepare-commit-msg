@@ -1,0 +1,5 @@
+#!/bin/sh
+# Strip Co-authored-by trailers before commit is finalized.
+HOOK_DIR="$(CDPATH= cd -- "$(dirname "$0")" && pwd)"
+node "$HOOK_DIR/strip-coauthor-trailer.js" "$1"
+exit 0
