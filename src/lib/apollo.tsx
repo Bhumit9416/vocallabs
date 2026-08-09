@@ -27,10 +27,16 @@ export function ApolloWrapper({ children }: { children: React.ReactNode }) {
         ? new GraphQLWsLink(
             createClient({
               url: config.graphqlWsUrl,
-              connectionParams: () =>
-                accessToken
-                  ? { headers: { Authorization: `Bearer ${accessToken}` } }
-                  : {},
+              connectionParams: () => {
+                if (!accessToken) return {};
+                return {
+                  headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                  },
+                };
+              },
+              retryAttempts: 5,
+              shouldRetry: () => true,
             })
           )
         : null;

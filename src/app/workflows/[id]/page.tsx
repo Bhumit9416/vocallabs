@@ -10,6 +10,7 @@ import {
   TRIGGER_RUN,
   WORKFLOW_DETAIL_QUERY,
   STEP_RUNS_SUB,
+  STEP_RUNS_QUERY,
 } from '@/lib/graphql';
 import { useAuth } from '@/lib/auth';
 import { useOrg } from '@/lib/org';
@@ -40,6 +41,12 @@ export default function WorkflowDetailPage() {
   const { data: live } = useSubscription(gql(STEP_RUNS_SUB), {
     variables: { runId },
     skip: !runId,
+  });
+
+  const { data: polled } = useQuery(gql(STEP_RUNS_QUERY), {
+    variables: { runId },
+    skip: !runId,
+    pollInterval: runId ? 1500 : 0,
   });
 
   useEffect(() => {
@@ -169,8 +176,10 @@ export default function WorkflowDetailPage() {
     );
   }
 
-  const stepRuns: StepRun[] = live?.step_runs || [];
-  const runStatus = live?.workflow_runs_by_pk?.status;
+  const stepRuns: StepRun[] =
+    (live?.step_runs?.length ? live.step_runs : polled?.step_runs) || [];
+  const runStatus =
+    live?.workflow_runs_by_pk?.status ?? polled?.workflow_runs_by_pk?.status;
   const webhookTriggerDef = workflow.triggers?.find((t) => t.type === 'webhook');
 
   return (
@@ -265,7 +274,11 @@ export default function WorkflowDetailPage() {
             )}
           </div>
 
-          {stepRuns.length === 0 && (
+          {runId && stepRuns.length === 0 && (
+            <p className="muted">Loading step status…</p>
+          )}
+
+          {!runId && stepRuns.length === 0 && (
             <p className="muted">Start a run to stream step_runs over GraphQL subscription.</p>
           )}
 

@@ -122,6 +122,36 @@ export const STEP_RUNS_SUB = `
   }
 `;
 
+export const STEP_RUNS_QUERY = `
+  query StepRuns($runId: uuid!) {
+    step_runs(
+      where: { workflow_run_id: { _eq: $runId } }
+      order_by: { position: asc }
+    ) {
+      id
+      position
+      status
+      input
+      output
+      error
+      attempt_count
+      approved_by
+      approved_at
+      workflow_step {
+        id
+        name
+        type
+      }
+    }
+    workflow_runs_by_pk(id: $runId) {
+      id
+      status
+      error
+      current_step_position
+    }
+  }
+`;
+
 export const TRIGGER_RUN = `
   mutation TriggerRun($workflowId: uuid!, $input: jsonb) {
     triggerWorkflowRun(workflow_id: $workflowId, input: $input) {
