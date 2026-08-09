@@ -478,7 +478,7 @@ async function createPermissions() {
         table: { schema: 'public', name: 'workflow_triggers' },
         role: 'user',
         permission: {
-          columns: ['id', 'workflow_id', 'type', 'config', 'is_active', 'created_at'],
+          columns: ['id', 'workflow_id', 'type', 'config', 'is_active', 'secret', 'created_at'],
           filter: { workflow: orgMemberFilter() },
         },
       },

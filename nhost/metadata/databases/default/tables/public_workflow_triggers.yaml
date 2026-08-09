@@ -14,6 +14,7 @@ select_permissions:
         - type
         - config
         - is_active
+        - secret
         - created_at
       filter:
         workflow:
