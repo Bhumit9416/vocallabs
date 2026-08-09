@@ -1,4 +1,4 @@
-# VocalLabs
+# VocalLabs Assignment
 
 Mini workflow builder for chaining AI agent steps. Built on Hasura GraphQL, PostgreSQL, and a Next.js app. Local stack uses Docker (Postgres + Hasura + Action handlers + auth). The same Hasura metadata/migrations under `nhost/` work with an nhost project if you prefer cloud hosting.
 
