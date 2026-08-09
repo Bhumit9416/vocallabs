@@ -19,6 +19,7 @@
 *.pem
 .env
 .env*.local
+.env.railway
 services/auth-stub/data/
 
 # debug
@@ -32,3 +33,5 @@ next-env.d.ts
 # ide
 .idea
 .vscode
+
+.vercel

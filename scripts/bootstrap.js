@@ -1,6 +1,7 @@
 /* Applies Hasura metadata and seeds the Final Task demo data. */
 
-const HASURA = process.env.HASURA_GRAPHQL_URL || 'http://localhost:8080';
+const HASURA_RAW = process.env.HASURA_GRAPHQL_URL || 'http://localhost:8080';
+const HASURA = HASURA_RAW.replace(/\/v1\/graphql\/?$/, '').replace(/\/$/, '');
 const ADMIN = process.env.HASURA_GRAPHQL_ADMIN_SECRET || 'local-admin-secret';
 const AUTH = process.env.AUTH_URL || 'http://localhost:4002';
 const FUNCTIONS = process.env.FUNCTIONS_URL || 'http://localhost:4001';

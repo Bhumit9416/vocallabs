@@ -116,7 +116,9 @@ docs/DEPLOY.md        Hosted deployment steps
 
 ## Deploy
 
-See **[docs/DEPLOY.md](docs/DEPLOY.md)** for Railway, nhost, and Vercel steps.
+See **[docs/RAILWAY.md](docs/RAILWAY.md)** for step-by-step backend deploy.
+
+Webhook reference: **[docs/WEBHOOKS.md](docs/WEBHOOKS.md)**
 
 Summary:
 

@@ -11,7 +11,10 @@
     "stack:down": "docker compose down",
     "bootstrap": "node scripts/bootstrap.js",
     "seed": "node scripts/bootstrap.js seed",
-    "smoke": "node scripts/smoke-test.js"
+    "smoke": "node scripts/smoke-test.js",
+    "migrate": "node scripts/migrate.js",
+    "railway:setup": "node scripts/railway-setup.js",
+    "test:webhook": "node scripts/test-webhook.js"
   },
   "dependencies": {
     "@apollo/client": "^3.11.10",
@@ -30,6 +33,7 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.35",
+    "pg": "^8.23.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
