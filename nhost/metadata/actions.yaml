@@ -1,0 +1,46 @@
+actions:
+  - name: triggerWorkflowRun
+    definition:
+      kind: synchronous
+      handler: '{{NHOST_FUNCTIONS_URL}}/trigger-workflow-run'
+      headers:
+        - name: x-hasura-admin-secret
+          value_from_env: HASURA_GRAPHQL_ADMIN_SECRET
+      forward_client_headers: true
+      timeout: 300
+    permissions:
+      - role: user
+    comment: Start a workflow run after verifying role and quota
+  - name: approveStep
+    definition:
+      kind: synchronous
+      handler: '{{NHOST_FUNCTIONS_URL}}/approve-step'
+      headers:
+        - name: x-hasura-admin-secret
+          value_from_env: HASURA_GRAPHQL_ADMIN_SECRET
+      forward_client_headers: true
+      timeout: 300
+    permissions:
+      - role: user
+    comment: Approve a paused approval_gate step after role check
+  - name: webhookTrigger
+    definition:
+      kind: synchronous
+      handler: '{{NHOST_FUNCTIONS_URL}}/webhook-trigger'
+      headers:
+        - name: x-hasura-admin-secret
+          value_from_env: HASURA_GRAPHQL_ADMIN_SECRET
+      forward_client_headers: true
+      timeout: 300
+    permissions:
+      - role: public
+      - role: user
+    comment: Inbound webhook endpoint to start a workflow run
+custom_types:
+  enums: []
+  input_objects: []
+  objects:
+    - name: TriggerWorkflowRunOutput
+    - name: ApproveStepOutput
+    - name: WebhookTriggerOutput
+  scalars: []

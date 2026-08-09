@@ -1,0 +1,52 @@
+table:
+  name: watched_events
+  schema: public
+object_relationships:
+  - name: organization
+    using:
+      foreign_key_constraint_on: org_id
+event_triggers:
+  - name: watched_event_insert
+    definition:
+      enable_manual: false
+      insert:
+        columns: '*'
+    retry_conf:
+      interval_sec: 10
+      num_retries: 3
+      timeout_sec: 60
+    webhook: "{{NHOST_FUNCTIONS_URL}}/db-event-trigger"
+    headers:
+      - name: x-nhost-webhook-secret
+        value_from_env: NHOST_WEBHOOK_SECRET
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - id
+        - org_id
+        - event_type
+        - payload
+        - created_at
+      filter:
+        organization:
+          members:
+            user_id:
+              _eq: X-Hasura-User-Id
+insert_permissions:
+  - role: user
+    permission:
+      columns:
+        - org_id
+        - event_type
+        - payload
+      check:
+        organization:
+          members:
+            _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - role:
+                  _in:
+                    - owner
+                    - editor

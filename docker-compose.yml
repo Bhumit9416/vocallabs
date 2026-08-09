@@ -1,0 +1,77 @@
+services:
+  postgres:
+    image: postgres:14
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: vocallabs
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./nhost/migrations/default/1765400000000_init/up.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  graphql-engine:
+    image: hasura/graphql-engine:v2.36.0
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      functions:
+        condition: service_started
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:postgres@postgres:5432/vocallabs
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      HASURA_GRAPHQL_DEV_MODE: "true"
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+      HASURA_GRAPHQL_ADMIN_SECRET: local-admin-secret
+      HASURA_GRAPHQL_JWT_SECRET: '{"type":"HS256","key":"local-jwt-secret-key-at-least-32-chars!!"}'
+      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: public
+      NHOST_FUNCTIONS_URL: http://functions:4001
+      NHOST_WEBHOOK_SECRET: local-webhook-secret
+
+  functions:
+    build:
+      context: ./functions
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "4001:4001"
+    environment:
+      PORT: 4001
+      HASURA_GRAPHQL_URL: http://graphql-engine:8080/v1/graphql
+      HASURA_GRAPHQL_ADMIN_SECRET: local-admin-secret
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL:-}
+      NHOST_WEBHOOK_SECRET: local-webhook-secret
+
+  auth-stub:
+    build:
+      context: ./services/auth-stub
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "4002:4002"
+    environment:
+      PORT: 4002
+      JWT_SECRET: local-jwt-secret-key-at-least-32-chars!!
+      HASURA_GRAPHQL_URL: http://graphql-engine:8080/v1/graphql
+      HASURA_GRAPHQL_ADMIN_SECRET: local-admin-secret
+      USER_STORE: /data/users.json
+    volumes:
+      - authdata:/data
+    depends_on:
+      - graphql-engine
+
+volumes:
+  pgdata:
+  authdata:

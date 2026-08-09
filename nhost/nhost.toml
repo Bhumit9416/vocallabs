@@ -1,0 +1,42 @@
+[global]
+
+[hasura]
+version = 'v2.38.0'
+adminSecret = '{{ secrets.HASURA_GRAPHQL_ADMIN_SECRET }}'
+webhookSecret = '{{ secrets.NHOST_WEBHOOK_SECRET }}'
+
+[[hasura.jwtSecrets]]
+type = 'HS256'
+key = '{{ secrets.HASURA_GRAPHQL_JWT_SECRET }}'
+
+[hasura.settings]
+enableRemoteSchemaPermissions = false
+
+[functions]
+node.version = 18
+
+[auth]
+version = '0.32.0'
+
+[auth.redirections]
+clientUrl = 'http://localhost:3000'
+allowedUrls = ['http://localhost:3000', 'http://localhost:3000/**']
+
+[auth.method.emailPassword]
+emailVerificationRequired = false
+hibpEnabled = false
+minPasswordLength = 8
+
+[auth.rateLimit.emails]
+limit = 10
+interval = '1h'
+
+[postgres]
+version = '14-20230312-1'
+
+[storage]
+version = '0.6.0'
+
+[observability]
+[observability.grafana]
+adminPassword = 'admin'

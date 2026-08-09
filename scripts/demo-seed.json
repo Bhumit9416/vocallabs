@@ -1,0 +1,13 @@
+{
+  "orgAId": "53bf5b48-79a6-4e7a-af82-b45366350b5c",
+  "orgBId": "48d59dda-1d43-486d-b149-7b129d15228e",
+  "workflowId": "e35bff8a-fb05-4740-94a1-c4a8042742e0",
+  "users": {
+    "ownerA": "owner.a@demo.local",
+    "editorA": "editor.a@demo.local",
+    "viewerA": "viewer.a@demo.local",
+    "ownerB": "owner.b@demo.local"
+  },
+  "password": "password123",
+  "webhookSecret": "org-a-webhook-secret"
+}

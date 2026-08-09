@@ -1,0 +1,14 @@
+- name: scheduled_workflow_tick
+  webhook: "{{NHOST_FUNCTIONS_URL}}/scheduled-trigger"
+  schedule: "*/5 * * * *"
+  include_in_metadata: true
+  payload: {}
+  headers:
+    - name: x-nhost-webhook-secret
+      value_from_env: NHOST_WEBHOOK_SECRET
+  retry_conf:
+    num_retries: 1
+    retry_interval_seconds: 30
+    timeout_seconds: 120
+    tolerance_seconds: 21600
+  comment: Poll active scheduled triggers every 5 minutes
