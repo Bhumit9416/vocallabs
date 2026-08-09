@@ -152,6 +152,23 @@ export const STEP_RUNS_QUERY = `
   }
 `;
 
+export const LATEST_DB_EVENT_RUN = `
+  query LatestDbEventRun($workflowId: uuid!) {
+    workflow_runs(
+      where: {
+        workflow_id: { _eq: $workflowId }
+        trigger_type: { _eq: database_event }
+      }
+      order_by: { created_at: desc }
+      limit: 1
+    ) {
+      id
+      status
+      created_at
+    }
+  }
+`;
+
 export const TRIGGER_RUN = `
   mutation TriggerRun($workflowId: uuid!, $input: jsonb) {
     triggerWorkflowRun(workflow_id: $workflowId, input: $input) {

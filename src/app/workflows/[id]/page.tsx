@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { gql, useMutation, useQuery, useSubscription } from '@apollo/client';
+import { gql, useMutation, useQuery, useSubscription, useApolloClient } from '@apollo/client';
 import {
   APPROVE_STEP,
   INSERT_WATCHED_EVENT,
@@ -11,6 +11,7 @@ import {
   WORKFLOW_DETAIL_QUERY,
   STEP_RUNS_SUB,
   STEP_RUNS_QUERY,
+  LATEST_DB_EVENT_RUN,
 } from '@/lib/graphql';
 import { useAuth } from '@/lib/auth';
 import { useOrg } from '@/lib/org';
@@ -28,6 +29,8 @@ export default function WorkflowDetailPage() {
   const [lead, setLead] = useState('Acme Corp — interested in enterprise plan');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [dbEventMsg, setDbEventMsg] = useState('');
+  const client = useApolloClient();
 
   const { data, loading, error: queryError, refetch } = useQuery(gql(WORKFLOW_DETAIL_QUERY), {
     variables: { id: workflowId },
@@ -130,7 +133,15 @@ export default function WorkflowDetailPage() {
     if (!current) return;
     setBusy(true);
     setError('');
+    setDbEventMsg('');
     try {
+      const before = await client.query({
+        query: gql(LATEST_DB_EVENT_RUN),
+        variables: { workflowId },
+        fetchPolicy: 'network-only',
+      });
+      const beforeId = before.data?.workflow_runs?.[0]?.created_at;
+
       await insertWatched({
         variables: {
           object: {
@@ -140,7 +151,26 @@ export default function WorkflowDetailPage() {
           },
         },
       });
-      setTimeout(() => refetch(), 1500);
+
+      setDbEventMsg('DB event inserted — waiting for workflow run…');
+
+      for (let i = 0; i < 12; i++) {
+        await new Promise((r) => setTimeout(r, 500));
+        const after = await client.query({
+          query: gql(LATEST_DB_EVENT_RUN),
+          variables: { workflowId },
+          fetchPolicy: 'network-only',
+        });
+        const run = after.data?.workflow_runs?.[0];
+        if (run && run.created_at !== beforeId) {
+          setRunId(run.id);
+          setDbEventMsg(`DB event started run (${run.status})`);
+          refetch();
+          return;
+        }
+      }
+
+      setDbEventMsg('Event saved. If no run appears, check Hasura event trigger logs.');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Event insert failed');
     } finally {
@@ -259,6 +289,11 @@ export default function WorkflowDetailPage() {
               GraphQL endpoint for external webhook:{' '}
               <span className="mono">webhookTrigger</span> with workflow id + secret.
             </p>
+            {dbEventMsg && (
+              <p className="muted" style={{ marginTop: '0.5rem', fontSize: '0.85rem' }}>
+                {dbEventMsg}
+              </p>
+            )}
           </section>
         </div>
 
